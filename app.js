@@ -7,10 +7,13 @@ const bodyParser = require('body-parser'),
 
 // App Config
 
-mongoose.connect('mongodb://localhost/RESTblog', {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
-});
+mongoose.connect(
+	'mongodb+srv://cpeterson:<thisisonlyatest>@cluster0.rpikz.mongodb.net/blogs?retryWrites=true&w=majority',
+	{
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	}
+);
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,7 +43,8 @@ app.get('/blogs', function(req, res) {
 	Blog.find({}, function(err, blogs) {
 		if (err) {
 			console.log(err);
-		} else {
+		}
+		else {
 			res.render('index', { blogs: blogs });
 		}
 	});
@@ -59,7 +63,8 @@ app.post('/blogs', function(req, res) {
 	Blog.create(req.body.blog, function(err, newBlog) {
 		if (err) {
 			res.render('new');
-		} else {
+		}
+		else {
 			res.redirect('/blogs');
 		}
 	});
@@ -71,7 +76,8 @@ app.get('/blogs/:id', function(req, res) {
 	Blog.findById(req.params.id, function(err, foundBlog) {
 		if (err) {
 			res.redirect('/blogs');
-		} else {
+		}
+		else {
 			res.render('show', { blog: foundBlog });
 		}
 	});
@@ -83,7 +89,8 @@ app.get('/blogs/:id/edit', function(req, res) {
 	Blog.findById(req.params.id, function(err, foundBlog) {
 		if (err) {
 			res.redirect('/blogs');
-		} else {
+		}
+		else {
 			res.render('edit', { blog: foundBlog });
 		}
 	});
@@ -100,7 +107,8 @@ app.put('/blogs/:id', function(req, res) {
 		function(err, updatedBlog) {
 			if (err) {
 				res.redirect('/blogs');
-			} else {
+			}
+			else {
 				res.redirect('/blogs/' + req.params.id);
 			}
 		}
@@ -113,12 +121,21 @@ app.delete('/blogs/:id', function(req, res) {
 	Blog.findByIdAndRemove(req.params.id, function(err) {
 		if (err) {
 			res.redirect('/blogs');
-		} else {
+		}
+		else {
 			res.redirect('/blogs');
 		}
 	});
 });
 
-app.listen(3000, function() {
-	console.log('Serving on PORT 3000');
-});
+// app.listen(3000, function() {
+// 	console.log('Serving on PORT 3000');
+// });
+
+// for serving on Heroku
+
+let port = process.env.PORT;
+if (port == null || port == '') {
+	port = 8000;
+}
+app.listen(port);
